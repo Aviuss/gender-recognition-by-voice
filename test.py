@@ -15,3 +15,4 @@ if __name__ == "__main__":
         print("done:", round(it / len(train_dataset) * 10000) / 100, "%")
 
     print("\nAccuracy:", round(correct / len(train_dataset) * 10000) / 100, "%")
+    print("Test set length:", len(train_dataset))
