@@ -1,6 +1,9 @@
-import numpy as np 
-import math
+import warnings
+from scipy.io.wavfile import WavFileWarning
+warnings.filterwarnings("ignore", category=WavFileWarning)
+import numpy as np
 from scipy.io import wavfile
+import sys
 
 def get_hz_signal(data, freqs, n, sample_rate):
     signal_fft = abs(np.fft.fft(data))
@@ -27,22 +30,38 @@ def get_dominant_freq_for_hz_signal(hz_signal):
     
     return dominant_freq
         
+def main(pathname = None, no_print = False):
+    if pathname == None:
+        if len(sys.argv) > 1:
+            pathname = sys.argv[1]
+        else:
+            raise Exception("No filename provided")
 
-if __name__ == "__main__":
-    sample_rate, data = wavfile.read("./train/001_K.wav")
+    sample_rate, data = wavfile.read(pathname)
     
     n = len(data)
     freqs = np.arange(0, n) * (sample_rate / n)
     
-
-    if (data.shape[1] != 1):
+    if (len(data.shape) > 1 and data.shape[1] != 1):
         data = data[:, 1]
-
-    #Mężczyzni 85-180Hz
-    #Kobiety 165-255Hz
     
     hz_signal = get_hz_signal(data, freqs, n, sample_rate)
     hz_signal_in_voice_range = extract_range_in_hz_signal(hz_signal, 85, 255)
-    dominant_freq = get_dominant_freq_for_hz_signal(hz_signal)
+    dominant_freq = get_dominant_freq_for_hz_signal(hz_signal_in_voice_range)
 
-    print("end")
+    threshold = 170
+    selected_gender = None
+    if dominant_freq > threshold:
+        selected_gender = "K"
+    else:
+        selected_gender = "M"
+
+    if not no_print:
+        print(selected_gender)
+    return selected_gender
+
+if __name__ == "__main__":
+    main()
+
+#Mężczyzni 85-180Hz
+#Kobiety 165-255Hz
