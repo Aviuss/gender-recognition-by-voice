@@ -1,14 +1,14 @@
 import os
 from main import main
-import json
+import json 
 
 if __name__ == "__main__":
     train_dataset = list(map(lambda x:("./train/"+x, x[-5]), os.listdir("./train")))
     
     
-    from_hz_range = [60, 70, 100, 150]
-    to_hz_range = [300, 400, 10000]
-    iterations_range = [2, 3, 4, 5, 6]
+    from_hz_range = [40, 43, 46, 49, 52]
+    to_hz_range = [300, 400, 500, 10000]
+    iterations_range = [4]
     
     
     it = 0
@@ -17,6 +17,7 @@ if __name__ == "__main__":
     results = []
     with open('./results.json', 'r') as f:
         results = json.load(f)
+
 
     calculated = []
     for r in results:
@@ -54,7 +55,7 @@ if __name__ == "__main__":
 
                     results.append([from_hz, to_hz, iterations, result, gender])
                     
-            print("done:", round(it / to_do * 10000) / 100, "%")
+                print("done:", round(it / to_do * 10000) / 100, "%")
         
         with open('./results.json', 'w+') as f:
             f.write(json.dumps(results))

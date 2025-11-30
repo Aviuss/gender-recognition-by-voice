@@ -56,8 +56,8 @@ if __name__ == "__main__":
         best_threshold = None
         percentage_value = None
         for t in range(85, 255 + 1, 1):
-            for i in range(100):
-                threshold = t + i/100
+            for i in range(200):
+                threshold = t + i/200
                 perct = calculatePercentage(selected_config, threshold)
                 
                 if best_threshold == None:
