@@ -10,13 +10,15 @@ def drawPlot(data):
     values = [d[-1] for d in data]
 
     max_point = max(data, key=lambda d: d[-1])
-    print("Point with highest value:", max_point)
+    max_points = list(filter(lambda x:x[-1] == max_point[-1], data))
+    print("Point with highest value:", max_points)
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
     sc = ax.scatter(x, y, z, c=values, cmap='viridis', s=50)
-    ax.scatter(max_point[0], max_point[1], max_point[2], color='red', s=150, label='Max value')
+    for p in max_points:
+        ax.scatter(p[0], p[1], p[2], color='red', s=150, label='Max value')
 
 
     cbar = plt.colorbar(sc)
