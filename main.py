@@ -14,6 +14,7 @@ def get_hz_signal(data, freqs, n, sample_rate, apply_window, get_seperate = Fals
     end_idx = int(len(signal_fft)/2+1)
     if get_seperate:
         return freqs[0:end_idx], signal_fft[0:end_idx]
+    
     hz_signal = zip(freqs[0:end_idx], signal_fft[0:end_idx])
     return list(hz_signal)
 
@@ -35,7 +36,7 @@ def get_dominant_freq_for_hz_signal(hz_signal):
     
     return dominant_freq
 
-def get_gender_from_harmonic_product_spectrum(sample_rate, data, n, freqs, iterations=4):
+def get_gender_from_harmonic_product_spectrum(sample_rate, data, n, freqs, threshold = 176, return_dominant_freq = False, from_hz = 85, to_hz = 255, iterations = 4):
     if (len(data.shape) > 1 and data.shape[1] != 1):
         data = data[:, 0]
     
@@ -46,13 +47,13 @@ def get_gender_from_harmonic_product_spectrum(sample_rate, data, n, freqs, itera
         downsampled = signal[::d]
         hpc[:len(downsampled)] *= downsampled
     
-
     hz_signal_hpc = list(zip(freqs, hpc))
-    hz_signal_in_voice_range = extract_range_in_hz_signal(hz_signal_hpc, 85-10, 255+10)
+    hz_signal_in_voice_range = extract_range_in_hz_signal(hz_signal_hpc, from_hz, to_hz)
     dominant_freq = get_dominant_freq_for_hz_signal(hz_signal_in_voice_range)
-    print(dominant_freq)
+    
+    if return_dominant_freq:
+        return dominant_freq
 
-    threshold = 176
     selected_gender = None
     if dominant_freq >= threshold:
         selected_gender = "K"
@@ -61,7 +62,7 @@ def get_gender_from_harmonic_product_spectrum(sample_rate, data, n, freqs, itera
 
     return selected_gender
 
-def main(pathname = None, no_print = False):
+def main(pathname = None, no_print = False, threshold = 176, return_dominant_freq = False, from_hz = 85, to_hz = 255, iterations = 4):
     if pathname == None:
         if len(sys.argv) > 1:
             pathname = sys.argv[1]
@@ -73,7 +74,17 @@ def main(pathname = None, no_print = False):
     n = len(data)
     freqs = np.arange(0, n) * (sample_rate / n)
     
-    selected_gender = get_gender_from_harmonic_product_spectrum(sample_rate, data, n, freqs)
+    selected_gender = get_gender_from_harmonic_product_spectrum(
+        sample_rate,
+        data,
+        n,
+        freqs,
+        threshold = threshold,
+        return_dominant_freq = return_dominant_freq,
+        from_hz = from_hz,
+        to_hz = to_hz,
+        iterations = iterations
+    )
     
     if not no_print:
         print(selected_gender)
