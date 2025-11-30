@@ -54,28 +54,7 @@ def get_gender_from_harmonic_product_spectrum(sample_rate, data, n, freqs, itera
 
     threshold = 176
     selected_gender = None
-    if dominant_freq > threshold:
-        selected_gender = "K"
-    else:
-        selected_gender = "M"
-
-    return selected_gender
-
-
-def get_gender_from_highest_freq_in_range(sample_rate, data, n, freqs, apply_window=True):
-    if (len(data.shape) > 1 and data.shape[1] != 1):
-        data = data[:, 0]
-    
-    hz_signal = get_hz_signal(data, freqs, n, sample_rate, apply_window)
-    hz_signal_in_voice_range = extract_range_in_hz_signal(hz_signal, 85, 255)
-    dominant_freq = get_dominant_freq_for_hz_signal(hz_signal_in_voice_range)
-    
-    threshold = 176 # better with apply_window
-    if apply_window == False:
-        threshold = 206
-
-    selected_gender = None
-    if dominant_freq > threshold:
+    if dominant_freq >= threshold:
         selected_gender = "K"
     else:
         selected_gender = "M"
