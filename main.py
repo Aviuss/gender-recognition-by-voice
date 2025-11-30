@@ -5,7 +5,10 @@ import numpy as np
 from scipy.io import wavfile
 import sys
 
-def get_hz_signal(data, freqs, n, sample_rate):
+def get_hz_signal(data, freqs, n, sample_rate, apply_window):
+    if apply_window:
+        window = np.hanning(n)
+        data = data * window
     signal_fft = abs(np.fft.fft(data))
     
     end_idx = int(len(signal_fft)/2+1)
@@ -30,15 +33,15 @@ def get_dominant_freq_for_hz_signal(hz_signal):
     
     return dominant_freq
 
-def get_gender_from_highest_freq_in_range(sample_rate, data, n, freqs):
+def get_gender_from_highest_freq_in_range(sample_rate, data, n, freqs, apply_window=True):
     if (len(data.shape) > 1 and data.shape[1] != 1):
         data = data[:, 0]
     
-    hz_signal = get_hz_signal(data, freqs, n, sample_rate)
+    hz_signal = get_hz_signal(data, freqs, n, sample_rate, apply_window)
     hz_signal_in_voice_range = extract_range_in_hz_signal(hz_signal, 85, 255)
     dominant_freq = get_dominant_freq_for_hz_signal(hz_signal_in_voice_range)
     
-    threshold = 176
+    threshold = 175
     selected_gender = None
     if dominant_freq > threshold:
         selected_gender = "K"
