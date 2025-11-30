@@ -41,7 +41,10 @@ def get_gender_from_highest_freq_in_range(sample_rate, data, n, freqs, apply_win
     hz_signal_in_voice_range = extract_range_in_hz_signal(hz_signal, 85, 255)
     dominant_freq = get_dominant_freq_for_hz_signal(hz_signal_in_voice_range)
     
-    threshold = 175
+    threshold = 176 # better with apply_window
+    if apply_window == False:
+        threshold = 206
+
     selected_gender = None
     if dominant_freq > threshold:
         selected_gender = "K"
