@@ -29,7 +29,7 @@ if __name__ == "__main__":
                         iterations = iterations
                     )
 
-                    results.append([from_hz, to_hz, iterations_range, result, gender])
+                    results.append([from_hz, to_hz, iterations, result, gender])
                     it += 1
                     
             print("done:", round(it / to_do * 10000) / 100, "%")
