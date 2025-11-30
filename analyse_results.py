@@ -28,7 +28,6 @@ def drawPlot(data):
     ax.set_ylabel('to hz')
     ax.set_zlabel('iterations')
 
-    plt.savefig("3d_plot.png", dpi=300)
     plt.show()
 
 def calculatePercentage(list, threshold):
