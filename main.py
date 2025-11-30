@@ -5,14 +5,16 @@ import numpy as np
 from scipy.io import wavfile
 import sys
 
-def get_hz_signal(data, freqs, n, sample_rate, apply_window):
+def get_hz_signal(data, freqs, n, sample_rate, apply_window, get_seperate = False):
     if apply_window:
         window = np.hanning(n)
         data = data * window
     signal_fft = abs(np.fft.fft(data))
     
     end_idx = int(len(signal_fft)/2+1)
-    hz_signal = zip(freqs[1:end_idx], signal_fft[1:end_idx])
+    if get_seperate:
+        return freqs[0:end_idx], signal_fft[0:end_idx]
+    hz_signal = zip(freqs[0:end_idx], signal_fft[0:end_idx])
     return list(hz_signal)
 
 def extract_range_in_hz_signal(hz_signal, hz_from, hz_to):
@@ -32,6 +34,33 @@ def get_dominant_freq_for_hz_signal(hz_signal):
             dominant_freq = i_freq
     
     return dominant_freq
+
+def get_gender_from_harmonic_product_spectrum(sample_rate, data, n, freqs, iterations=4):
+    if (len(data.shape) > 1 and data.shape[1] != 1):
+        data = data[:, 0]
+    
+    (freqs, signal) = get_hz_signal(data, freqs, n, sample_rate, apply_window=True, get_seperate=True)    
+    
+    hpc = signal.copy()
+    for d in range(2, iterations+1):
+        downsampled = signal[::d]
+        hpc[:len(downsampled)] *= downsampled
+    
+
+    hz_signal_hpc = list(zip(freqs, hpc))
+    hz_signal_in_voice_range = extract_range_in_hz_signal(hz_signal_hpc, 85-10, 255+10)
+    dominant_freq = get_dominant_freq_for_hz_signal(hz_signal_in_voice_range)
+    print(dominant_freq)
+
+    threshold = 176
+    selected_gender = None
+    if dominant_freq > threshold:
+        selected_gender = "K"
+    else:
+        selected_gender = "M"
+
+    return selected_gender
+
 
 def get_gender_from_highest_freq_in_range(sample_rate, data, n, freqs, apply_window=True):
     if (len(data.shape) > 1 and data.shape[1] != 1):
@@ -65,7 +94,7 @@ def main(pathname = None, no_print = False):
     n = len(data)
     freqs = np.arange(0, n) * (sample_rate / n)
     
-    selected_gender = get_gender_from_highest_freq_in_range(sample_rate, data, n, freqs)
+    selected_gender = get_gender_from_harmonic_product_spectrum(sample_rate, data, n, freqs)
     
     if not no_print:
         print(selected_gender)
