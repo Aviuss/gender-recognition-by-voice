@@ -64,7 +64,7 @@ def get_gender_from_harmonic_product_spectrum(sample_rate, data, n, freqs, thres
 
     return selected_gender
 
-def main(pathname = None, no_print = False, threshold = 169.839, return_dominant_freq = False, iterations = 4):
+def main(pathname = None, no_print = False, threshold = 172.698, return_dominant_freq = False, iterations = 4):
     if pathname == None:
         if len(sys.argv) > 1:
             pathname = sys.argv[1]

@@ -22,7 +22,7 @@ Na początku wykonałem analizę wyżej opisanego algorytmu bez kroku 6. To znac
 
 Przedstawiony wykres ukazuje procent trafności algorytmu w zależności od użytej maksymalnej ilości downsamplacji. Wartość progowa do ustalania płci została ustawiona iteracyjnie od $80$ do $250$ z krokiem co $0.001$, tak aby zmaksymalizować skuteczność. Analiza została wykonana na 91 próbkach danych.
 
-Algorytm uzyskał najwyższą wartość skuteczności $78.02\%$ dla wartości
+Algorytm uzyskał najwyższą wartość skuteczności $78.02$% dla wartości
 1. ilość downsamplacji = $4$ oraz wartość progowa płci $172.698$
 2. ilość downsamplacji = $5$ oraz wartość progowa płci $168.977$
 
@@ -39,7 +39,7 @@ W finalnym algorytmie krok 6. został uwzględniony. Jako, że zakres częstotli
 
 ![wykres pierwszy](./iterations_hpc_range.png)
 
-Algorytm uzyskał najwyższą wartość skuteczności $91.21\%$ dla wartości
+Algorytm uzyskał najwyższą wartość skuteczności $91.21$% dla wartości
 1. ilość downsamplacji = $4$ oraz wartość progowa płci $172.698$
 
 Macierz pomyłek.
