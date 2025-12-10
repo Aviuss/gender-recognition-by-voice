@@ -37,7 +37,7 @@ Macierz pomyłek dla pierwszego wyniku.
 
 W finalnym algorytmie krok 6. został uwzględniony. Jako, że zakres częstotliwości sygnału audio jest duży, a my chcemy wykrywać głos ludzki, sygnał `hpc` zostaje odizolowany od $50\text{Hz}$ do $300\text{Hz}$ aby zakres ten na pewno uwzględniał częstotliwość podstawową tonu krtaniowego.
 
-![wykres pierwszy](./iterations_hpc_range.png.png)
+![wykres pierwszy](./iterations_hpc_range.png)
 
 Algorytm uzyskał najwyższą wartość skuteczności $91.21\%$ dla wartości
 1. ilość downsamplacji = $4$ oraz wartość progowa płci $172.698$
