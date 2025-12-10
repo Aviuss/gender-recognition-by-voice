@@ -48,6 +48,5 @@ Macierz pomyłek.
 | --------------------- | ---------------------- | ---------------------- |
 | Rzeczywista klasa `K` | 40                     | 6                      |
 | Rzeczywista klasa `M` | 2                      | 43                     |
+
 Izolacja częstotliwości pomogła radykalnie zmniejszyć błędy w przypadku, kiedy kobieta mówi.
-
-
