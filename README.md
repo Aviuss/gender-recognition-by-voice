@@ -1,21 +1,19 @@
 # Algorytm do wykrywania płci po głosie.
 
-## Opis algorytmu
+## Opis algorytmu 
 
 1. z pliku audio pobierana jest jedna ścieżka dźwiękowa
 2. ścieżka dźwiękowa jest mnożona przez okno Hanning'a
 3. z pliku audio metodą szybkiej transformaty Fouriera tworzone jest widmo, z którego brany jest moduł. Dla utworzonego sygnału FFT liczona jest częstotliwość dla każdej wartości sygnału mnożąc indeks sygnału (od zera) razy $\frac{\text{częstotliwość próbkowania}}{\text{długość sygnału FFT}}$
 4. następnie jest liczony `Harmonic Product Spectrum`
-	- kopiowany jest sygnał do zmiennej `hpc`
+    - kopiowany jest sygnał do zmiennej `hpc`
 	- dla `d`, gdzie jest to liczba downsamplacji algorytmu `hpc`, od $2$ do ustawionej wartości maksymalnej
-	- sygnał jest downsamplowany co `d` (`downsampled = signal[::d]`)
-	- następnie jest mnożony z sygnałem `hpc` (`hpc[:len(downsampled)] *= downsampled`)
-5. otrzymany sygnał `hpc` jest izolowany do wartości od $50 \text{Hz}$ do $300 \text{Hz}$
-6. w finalnym sygnale `hpc` szukamy częstotliwości dominującej, tj. taka częstotliwość, dla której wartość sygnału `hpc` jest jak najwyższa
-7. dominująca częstotliwość jest porównywana z ustaloną wartością progową, jeśli jest mniejsza niż wartość progowa, wtedy płeć jest ustalana jako mężczyzna, inaczej jako kobieta
-
+		- sygnał jest downsamplowany co `d` (`downsampled = signal[::d]`)
+		- następnie jest mnożony z sygnałem `hpc` (`hpc[:len(downsampled)] *= downsampled`)
+1. otrzymany sygnał `hpc` jest izolowany do wartości od $50 \text{Hz}$ do $300 \text{Hz}$
+2. w finalnym sygnale `hpc` szukamy częstotliwości dominującej, tj. taka częstotliwość, dla której wartość sygnału `hpc` jest jak najwyższa
+3. dominująca częstotliwość jest porównywana z ustaloną wartością progową, jeśli jest mniejsza niż wartość progowa, wtedy płeć jest ustalana jako mężczyzna, inaczej jako kobieta
 ## Wyniki początkowe i opytmalizacjia
-
 Na początku wykonałem analizę wyżej opisanego algorytmu bez kroku 6. To znaczy, częstotliwość dominującą z sygnału `hpc` pobierałem z całego spektrum widma.
 
 ![wykres pierwszy](./iterations_hpc.png)
@@ -28,25 +26,28 @@ Algorytm uzyskał najwyższą wartość skuteczności $78.02$% dla wartości
 
 Macierz pomyłek dla pierwszego wyniku.
 
-|                       | Przewidziana klasa `K` | Przewidziana klasa `M` |
-| --------------------- | ---------------------- | ---------------------- |
-| Rzeczywista klasa `K` | 28                     | 18                     |
-| Rzeczywista klasa `M` | 2                      | 43                     |
+  
 
+|                                 | Przewidywana klasa Kobieta | Przewidywana klasa Mężczyzna |
+| ------------------------------- | -------------------------- | ---------------------------- |
+| **Rzeczywista klasa Kobieta**   | $28$                       | $18$                         |
+| **Rzeczywista klasa Mężczyzna** | $2$                        | $43$                         |
+  
 # Wyniki finalne
 
 W finalnym algorytmie krok 6. został uwzględniony. Jako, że zakres częstotliwości sygnału audio jest duży, a my chcemy wykrywać głos ludzki, sygnał `hpc` zostaje odizolowany od $50\text{Hz}$ do $300\text{Hz}$ aby zakres ten na pewno uwzględniał częstotliwość podstawową tonu krtaniowego.
 
-![wykres pierwszy](./iterations_hpc_range.png)
+![wykres pierwszy](./iterations_hpc_range.png)  
 
 Algorytm uzyskał najwyższą wartość skuteczności $91.21$% dla wartości
 1. ilość downsamplacji = $4$ oraz wartość progowa płci $172.698$
 
 Macierz pomyłek.
 
-|                       | Przewidziana klasa `K` | Przewidziana klasa `M` |
-| --------------------- | ---------------------- | ---------------------- |
-| Rzeczywista klasa `K` | 40                     | 6                      |
-| Rzeczywista klasa `M` | 2                      | 43                     |
+|                                 | Przewidywana klasa Kobieta | Przewidywana klasa Mężczyzna |
+| ------------------------------- | -------------------------- | ---------------------------- |
+| **Rzeczywista klasa Kobieta**   | $40$                       | $6$                          |
+| **Rzeczywista klasa Mężczyzna** | $2$                        | $43$                         |
+  
 
-Izolacja częstotliwości pomogła radykalnie zmniejszyć błędy w przypadku, kiedy kobieta mówi.
+Izolacja częstotliwości pomogła znacznie zmniejszyć błędy w przypadku, kiedy mówi kobieta.
