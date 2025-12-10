@@ -5,38 +5,28 @@ import numpy as np
 
 def drawPlot(data):
     x = [d[0] for d in data]
-    y = [d[1] for d in data]
-    z = [d[2] for d in data]
     values = [d[-1] for d in data]
 
-    max_point = max(data, key=lambda d: d[-1])
-    max_points = list(filter(lambda x:x[-1] == max_point[-1], data))
-    print("Point with highest value:", max_points)
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    sc = ax.scatter(x, y, z, c=values, cmap='viridis', s=50)
-    for p in max_points:
-        ax.scatter(p[0], p[1], p[2], color='red', s=150, label='Max value')
-
-
-    cbar = plt.colorbar(sc)
-    cbar.set_label('percentage')
-
-    ax.set_xlabel('from hz')
-    ax.set_ylabel('to hz')
-    ax.set_zlabel('iterations')
-
+    max_value = max(values)
+    max_points = list(filter(lambda x:x[-1] == max_value, data))
+    print("Point(s) with highest value:", max_points)
+    for mx, _, my in max_points:
+        plt.scatter(mx, my, color='red')
+        
+    plt.plot(x, values, marker='', linestyle='-', color='blue')
+    plt.xlabel('hpc iterations')
+    plt.ylabel('correct percentage')
+    plt.legend()
     plt.show()
+
 
 def calculatePercentage(list, threshold):
     correct = 0
     for e in list:
         r = "M"
-        if e[3] >= threshold:
+        if e[1] >= threshold:
             r = "K"
-        if r == e[4]:
+        if r == e[2]:
             correct += 1
     return correct / len(list)
 
@@ -50,14 +40,15 @@ if __name__ == "__main__":
     while len(results) != 0:
         sample = results[0]
         print("Left to be done:", len(results))
-        selected_config = list(filter(lambda x:x[0] == sample[0] and x[1] == sample[1] and x[2] == sample[2], results))
-        results = list(filter(lambda x:not (x[0] == sample[0] and x[1] == sample[1] and x[2] == sample[2]), results))
+        selected_config = list(filter(lambda x:x[0] == sample[0], results))
+        results = list(filter(lambda x:not (x[0] == sample[0]), results))
 
         best_threshold = None
         percentage_value = None
+        PRECISION = 100
         for t in range(85, 255 + 1, 1):
-            for i in range(200):
-                threshold = t + i/200
+            for i in range(PRECISION):
+                threshold = t + i/PRECISION
                 perct = calculatePercentage(selected_config, threshold)
                 
                 if best_threshold == None:
@@ -67,7 +58,7 @@ if __name__ == "__main__":
                     percentage_value = perct
                     best_threshold = threshold
 
-        config_and_results.append([sample[0], sample[1], sample[2], best_threshold, percentage_value])
+        config_and_results.append([sample[0], best_threshold, percentage_value])
 
     with open('./config_and_results.json', 'w+') as f:
         f.write(json.dumps(config_and_results))
